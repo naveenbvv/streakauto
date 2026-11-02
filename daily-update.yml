@@ -1,0 +1,39 @@
+name: Daily Repository Update
+
+on:
+  schedule:
+    - cron: "30 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  daily-update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Configure Git identity
+        run: |
+          git config user.name "naveenbvv"
+          git config user.email "naveenbv3011@gmail.com"
+
+      - name: Run the script
+        run: python streak.py
+
+      - name: Commit and push changes
+        run: |
+          git add streak.log
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: daily repository update"
+            git push
+          fi
+          
